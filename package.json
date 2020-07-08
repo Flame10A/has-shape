@@ -1,0 +1,20 @@
+{
+  "name": "has-shape",
+  "version": "1.0.0",
+  "description": "Super simple runtime type-checking for Javascript objects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "author": "Flame10A <flame10a.npm@gmail.com> (http://flame10a.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "jest": "^25.1.0",
+    "typescript": "^3.7.5"
+  }
+}
