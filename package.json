@@ -13,8 +13,8 @@
   "author": "Flame10A <flame10a.npm@gmail.com> (http://flame10a.com)",
   "license": "ISC",
   "devDependencies": {
-    "@types/jest": "^25.1.2",
-    "jest": "^25.1.0",
-    "typescript": "^3.7.5"
+    "@types/jest": "^26.0.4",
+    "jest": "^26.1.0",
+    "typescript": "^3.9.6"
   }
 }
