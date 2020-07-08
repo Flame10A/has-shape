@@ -138,17 +138,3 @@ const teamShape = {
 
 if (hasShape(obj, teamShape)) {
 ```
-
-### `assertShape()`
-
-This is an additional function which is the assertion equivelent of
-    `hasShape()`.
-
-It receives the same parameters, and will return nothing if the check succeeds,
-    or throw if it fails.
-
-```javascript
-assert(obj, { name: 'string' }); // Throws if obj doesn't have a string name
-
-// Do stuff if obj has a valid name
-```
