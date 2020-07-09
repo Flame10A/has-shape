@@ -59,16 +59,6 @@ describe('hasShape() function', () => {
         expect(res).toBe(true);
     });
 
-    it('Matches a class-specified property', () => {
-        var objectA = { inst: Promise.resolve() };
-        var objectB = { inst: {} };
-
-        var shape = { inst: Promise };
-
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
-    });
-
     it('Matches a predicate-specified property', () => {
         var objectA = { num: 3 };
         var objectB = { num: 11 };

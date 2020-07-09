@@ -15,37 +15,19 @@ export const matchesSpecifier = <T extends ShapeProperty>(value: unknown, specif
     switch (typeof specifier) {
         case 'string':
             if (specifier === 'any' || specifier === 'unknown') {
-                break;
+                return true;
             }
-            else if (typeof value !== specifier) {
-                return false;
-            }
-            break;
+
+            return typeof value === specifier;
         case 'function':
-            if (isClass(specifier)) {
-                if (!(value instanceof (specifier as Function))) {
-                    return false;
-                }
-            }
-            else if (!(specifier as Function)(value)) {
-                return false;
-            }
-            break;
+            return (specifier as Function)(value);
         case 'object':
             if (specifier instanceof RegExp) {
-                if (typeof value !== 'string' || !specifier.test(value)) {
-                    return false;
-                }
-                break;
+                return typeof value === 'string' && specifier.test(value);
             }
         default:
-            if (!hasShape(value, specifier as Shape)) {
-                return false;
-            }
-            break;
+            return hasShape(value, specifier as Shape);
     }
-
-    return true;
 };
 
 /**

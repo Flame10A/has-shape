@@ -16,7 +16,6 @@ if (hasShape(formData, { name: 'string', password: isValidPassword })) {
 - Check object properties by:
     - `typeof` strings (`'boolean'`, `'number'`, `'string'`, etc.)
         - Additionally allows 'any' and 'unknown'
-    - Classes/constructor functions
     - Nested object shapes
     - Regular expressions
     - Predicate functions
@@ -64,15 +63,6 @@ As well as Javascript's built-in primitive types, `'any'` and `'unknown'` are
 
 ```javascript
 if (hasShape(obj, { a: 'string', b: 'number', c: 'any' })) {
-```
-
-#### Classes/constructor functions
-
-If a class or constructor function is passed, the property is checked using
-    `instanceof`, to see if it is an instance of the class.
-
-```javascript
-if (hasShape(obj, { request: Promise })) {
 ```
 
 #### Nested shapes
