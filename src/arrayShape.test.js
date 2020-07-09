@@ -1,4 +1,5 @@
 var arrayShape = require('../dist/arrayShape').default;
+var assertionContext = require('../dist/assertionContext').default;
 
 describe('arrayShape() function', () => {
     it ('Matches correct arrays', () => {
@@ -27,5 +28,16 @@ describe('arrayShape() function', () => {
 
         expect(shape(arrA)).toBe(true);
         expect(shape(arrB)).toBe(false);
+    });
+
+    it ('Throws when used in an assertion', () => {
+        assertionContext.push(0);
+
+        const arrA = [1, 2];
+        const shape = arrayShape('string');
+
+        expect(() => shape(arrA)).toThrow();
+
+        assertionContext.clear();
     });
 });

@@ -1,5 +1,4 @@
-var hasShape = require('../dist/hasShape').default;
-var arrayShape = require('../dist/hasShape').arrayShape;
+var assertShape = require('../dist/assertShape').default;
 
 describe('hasShape() function', () => {
 
@@ -10,9 +9,9 @@ describe('hasShape() function', () => {
 
         var shape = { num: 'number' };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
-        expect(hasShape(objectC, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).toThrow();
+        expect(() => assertShape(objectC, shape)).toThrow();
     });
 
     it('Matches multiple basic properties', () => {
@@ -22,9 +21,9 @@ describe('hasShape() function', () => {
 
         var shape = { num: 'number', str: 'string' };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
-        expect(hasShape(objectC, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).toThrow();
+        expect(() => assertShape(objectC, shape)).toThrow();
     });
 
     it('Matches any-specified properties', () => {
@@ -34,9 +33,9 @@ describe('hasShape() function', () => {
 
         var shape = { num: 'number', something: 'any' };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(true);
-        expect(hasShape(objectC, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).not.toThrow();
+        expect(() => assertShape(objectC, shape)).not.toThrow();
     });
 
     it('Matches unknown-specified properties', () => {
@@ -47,16 +46,16 @@ describe('hasShape() function', () => {
 
         var shape = { num: 'number', something: 'unknown' };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(true);
-        expect(hasShape(objectC, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).not.toThrow();
+        expect(() => assertShape(objectC, shape)).not.toThrow();
     });
 
     it('Allows extraneous properties', () => {
         var object = { num: 3, func: () => null };
+        var shape = { num: 'number' };
 
-        var res = hasShape(object, { num: 'number' });
-        expect(res).toBe(true);
+        expect(() => assertShape(object, shape)).not.toThrow();
     });
 
     it('Matches a predicate-specified property', () => {
@@ -65,8 +64,8 @@ describe('hasShape() function', () => {
 
         var shape = { num: n => n < 10 };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).toThrow();
     });
 
     it('Matches a regular expression property', () => {
@@ -76,8 +75,8 @@ describe('hasShape() function', () => {
         // This is a terrible email regex, don't actually use this kinda thing
         var shape = { email: /[a-z]+@[a-z]+\.[a-z]+/ };
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).toThrow();
     });
 
     it('Matches nested shapes', () => {
@@ -87,9 +86,9 @@ describe('hasShape() function', () => {
 
         var shape = { num: 'number', obj: { str: 'string' }};
 
-        expect(hasShape(objectA, shape)).toBe(true);
-        expect(hasShape(objectB, shape)).toBe(false);
-        expect(hasShape(objectC, shape)).toBe(false);
+        expect(() => assertShape(objectA, shape)).not.toThrow();
+        expect(() => assertShape(objectB, shape)).toThrow();
+        expect(() => assertShape(objectC, shape)).toThrow();
     });
 
     it('Can run for tuples too', () => {
@@ -99,9 +98,9 @@ describe('hasShape() function', () => {
 
         var shape = ['number', 'string'];
 
-        expect(hasShape(arrA, shape)).toBe(true);
-        expect(hasShape(arrB, shape)).toBe(false);
-        expect(hasShape(arrC, shape)).toBe(false);
+        expect(() => assertShape(arrA, shape)).not.toThrow();
+        expect(() => assertShape(arrB, shape)).toThrow();
+        expect(() => assertShape(arrC, shape)).toThrow();
     });
 
     it('Can run for functions with properties too', () => {
@@ -113,9 +112,9 @@ describe('hasShape() function', () => {
 
         var shape = { onError: 'function' };
 
-        expect(hasShape(funcA, shape)).toBe(true);
-        expect(hasShape(funcB, shape)).toBe(false);
-        expect(hasShape(funcC, shape)).toBe(false);
+        expect(() => assertShape(funcA, shape)).not.toThrow();
+        expect(() => assertShape(funcB, shape)).toThrow();
+        expect(() => assertShape(funcC, shape)).toThrow();
     });
 
 });
