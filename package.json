@@ -4,6 +4,10 @@
   "description": "Super simple runtime type-checking for Javascript objects",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Flame10A/has-shape"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
