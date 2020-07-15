@@ -1,74 +1,83 @@
-import { RealTypeOfProperty, ShapeProperty, RealTypeOfShape, Shape } from "./shapeTypes";
-import { isValidInput, assertionError } from "./utils";
-import assertionContext from "./assertionContext";
+import { RealTypeOfShape, Shape, ShapeObject } from "./shapeTypes";
+import context from "./context";
 
-export function assertSpecifier<T extends ShapeProperty>(value: unknown, specifier: T): asserts value is RealTypeOfProperty<T> {
-    switch (typeof specifier) {
-        case 'string':
-            if (specifier === 'any' || specifier === 'unknown') {
+/**
+ * Asserts that `target` matches the given `shape`.
+ * @see `hasShape()`
+ */
+function assertShape <T extends Shape>(target: unknown, shape: T): asserts target is RealTypeOfShape<T> {
+    context.runInLayer(() => {
+        switch (typeof shape) {
+            case 'string':
+                if (shape === 'any' || shape === 'unknown') {
+                    break;
+                }
+
+                if (typeof target !== shape) {
+                    throw `Expected type to be '${shape}'; received ${typeof target}`;
+                }
+
                 break;
-            }
+            case 'function':
+                let result;
 
-            if (typeof value !== specifier) {
-                throw assertionError(`Expected type to be '${specifier}'; received ${typeof value}`);
-            }
+                try { result = (shape as Function)(target); }
+                catch (error) { throw `Error running predicate: ${error}`; }
 
-            break;
-        case 'function':
-            let result;
-
-            try { result = (specifier as Function)(value); }
-            catch (error) { throw assertionError(`Error running predicate: ${error}`) }
-
-            if (typeof result === 'boolean') {
-                if (!result) {
-                    throw assertionError(`Value did not pass predicate. Received: ${value}`);
+                if (typeof result === 'boolean') {
+                    if (!result) {
+                        throw `Value did not pass predicate. Received: ${target}`;
+                    }
                 }
-            }
-            else if (typeof result !== 'undefined') {
-                console.warn(`Received an unexpected predicate return value at ${assertionContext.getString()}. Predicates should return a boolean, or undefined. Received: ${result}`);
-            }
-
-            break;
-        case 'object':
-            if (specifier instanceof RegExp) {
-                if (typeof value !== 'string') {
-                    throw assertionError(`Could not test value with regular expression, as it is not a string. Received ${value}`);
+                else if (typeof result !== 'undefined') {
+                    console.warn(`Unexpected return value. Functions should return a boolean (predicates), or undefined (assertions). Received: ${result}`);
                 }
-                else if (!specifier.test(value)) {
-                    throw assertionError(`Value failed to match regular expression ${specifier}. Received: ${value}`);
-                }
-            }
-            else {
-                assertShape(value, specifier as Shape);
-            }
 
-            break;
-        default:
-            throw assertionError(`Invalid specifier: ${specifier}`);
-    }
+                break;
+            case 'object':
+                if (shape === null) {
+                    if (target !== null) {
+                        throw `Expected value to be null; received: ${target}`;
+                    }
+                }
+                else if (shape instanceof RegExp) {
+                    if (typeof target !== 'string') {
+                        throw `Could not test value with regular expression, as it is not a string. Received ${target}`;
+                    }
+                    else if (!shape.test(target)) {
+                        throw `Value failed to match regular expression ${shape}. Received: ${target}`;
+                    }
+                }
+                else {
+                    assertObjectShape(target, shape as ShapeObject);
+                }
+
+                break;
+            default:
+                throw `Invalid shape: ${shape}`;
+        }
+    });
 }
 
-function assertShape<T extends Shape>(target: unknown, shape: T): asserts target is RealTypeOfShape<T> {
-    if (!isValidInput(target)) {
-        throw assertionError(`Invalid target: ${target}`);
-    }
+const isValidObjectShape = (obj: unknown): obj is Object | Function => {
+    return !!obj && (typeof obj === 'object' || typeof obj === 'function');
+};
 
-    try {
-        for (const key in shape) {
-            const specifier = shape[key];
-            const value = (target as any)[key] as unknown;
-
-            assertionContext.push(key);
-
-            assertSpecifier(value, specifier);
-
-            assertionContext.pop();
+function assertObjectShape<T extends ShapeObject>(target: unknown, shape: T): asserts target is RealTypeOfShape<T> {
+    context.runInLayer(() => {
+        if (!isValidObjectShape(target)) {
+            throw `Invalid object shape: ${target}`;
         }
-    }
-    catch (error) { throw error; }
-    finally { assertionContext.clear(); }
 
+        for (const key in shape) {
+            context.runInLayer(key, () => {
+                const specifier = shape[key];
+                const value = (target as any)[key] as unknown;
+
+                assertShape(value, specifier);
+            });
+        }
+    });
 }
 
 export default assertShape;

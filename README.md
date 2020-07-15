@@ -1,117 +1,56 @@
-Super simple runtime type-checking for Javascript objects.
-
-![npm](https://img.shields.io/npm/v/has-shape)
+[![hasShape() on NPM](https://img.shields.io/npm/v/has-shape)](https://www.npmjs.com/package/has-shape)
 ![typings: included](https://img.shields.io/badge/typings-included-brightgreen)
 ![dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen)
 
-```javascript
-if (hasShape(formData, { name: 'string', password: isValidPassword })) {
-    // Yep, formData has valid 'name' and 'password' fields
-}
-```
+Super simple runtime type-checking for Javascript objects.
 
-## Features
-- Runtime type-checking of objects and tuples
-    - Functions with properties can be checked too
-- Check object properties by:
-    - `typeof` strings (`'boolean'`, `'number'`, `'string'`, etc.)
-        - Additionally allows 'any' and 'unknown'
-    - Nested object shapes
-    - Regular expressions
-    - Predicate functions
-- Type hints for Typescript and type-aware IDEs (such as VS Code)
+Also provides relevant typing for Typescript and type-aware IDEs (e.g. VS Code).
 
-## Installation
+# Installation
 ```sh
 npm install has-shape
 ```
 
-## Usage
-
-### Basics
-`hasShape(target, shape) => boolean`
-
-hasShape receives two parameters:
-- **target** - the value you wish to check
-- **shape** - an object which specifies the properties you wish to check on
-    the target. Example: `{ propertyA: 'number', propertyB: 'string'}
-
-The target object will be checked against the shape, to see if it has all the
-    required properties, with the correct types/specifications:
-
+# Basic usage
+`hasShape()` receives a value, and a shape specifier. It then determines
+    whether the value matches the shape.
 
 ```javascript
 import hasShape from 'has-shape';
 
 // ...
 
-if (hasShape(person, { name: 'string', age: 'number' })) {
-    // True if person has 'name' of type string, and 'age' of type number
+if (hasShape(formData, { name: 'string', password: isValidPassword })) {
+    // ...
 }
 ```
 
-### Type specifiers
+In this example, `formData` must pass the following conditions:
+- It is an object.
+- It has a `name` property, which is a string.
+- It has a `password` property, which passes the `isValidPassword` predicate.
 
-#### `typeof` strings
+# Supported shapes
 
-Strings are interpreted as `typeof` strings - the property will have its
-    `typeof` result compared with the string.
+- Object shapes, e.g. `{ name: 'string', age: 'number' }`
+- `typeof` strings
+    - 'number', 'string', etc.
+    - Also includes 'any' and 'unknown'. These match any type, and the typings
+        map to the matching TS type.
+- Nested object shapes
+- Regular Expressions
+- Predicate functions
+- Assertion functions
+- Array shapes (via `arrayShape()`)
 
-As well as Javascript's built-in primitive types, `'any'` and `'unknown'` are
-    also valid specifiers. Properties with these two are always valid, the only
-    difference being the type interpreted by Typescript or the IDE.
-
-```javascript
-if (hasShape(obj, { a: 'string', b: 'number', c: 'any' })) {
-```
-
-#### Nested shapes
-
-Shapes can be nested, to, well, check nested properties.
-
-```javascript
-if (hasShape(obj, { nestedObject: { nestedProperty: 'number' } })) {
-```
-
-#### Regular expressions
-
-A regular expression specifier will check that the property is a string, and
-    that it matches the regular expression.
-
-```javascript
-if (hasShape(obj, { username: /^[a-z]{3,16}$/i })) {
-```
-
-#### Predicate functions
-
-Any other function is treated as a predicate - it will receive the property's
-    value, and the boolean result determines whether it's valid or not.
-
-```javascript
-if (hasShape(obj, { password: isValidPassword })) {
-```
-
-## Additional Functions
-
-### `compileShape()`
-
-Creates a predicate function for the given shape, for convenience.
-
-```javascript
-const isValid = compileShape({ username: /^[a-z]{3,16}$/i, password: isValidPassword });
-
-if (isValid(credentials)) {
-```
+# Additional functions
 
 ### `arrayShape()`
 
-Creates a predicate which matches arrays containing elements of
-    the given specifier.
+Creates a shape which matches arrays containing elements of the given specifier.
 
 ```javascript
-const isNumberArray = arrayShape('number');
-
-if (isNumberArray(value)) {
+if (hasShape(value, arrayShape('number'))) { // True if value is an array of numbers
 ```
 
 By default, empty arrays are allowed. This can be overridden by passing an
@@ -127,4 +66,23 @@ const teamShape = {
 };
 
 if (hasShape(obj, teamShape)) {
+```
+
+## `assertShape()`
+
+The same as `hasShape()`, but rather than returning a boolean, instead throws
+    a descriptive error if the value does not match the shape.
+
+```javascript
+assertShape(person, personShape); // Throws if person does not match personShape
+```
+
+## `shape()`
+
+Creates an assertion function for the given shape.
+
+```javascript
+const personShape = shape({ name: 'string', age: 'number' });
+
+personShape(person); // Throws if person does not match personShape
 ```

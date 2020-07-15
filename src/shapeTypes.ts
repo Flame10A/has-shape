@@ -1,4 +1,4 @@
-export type ShapeProperty =
+export type Shape =
     'undefined'
     | 'boolean'
     | 'number'
@@ -10,11 +10,16 @@ export type ShapeProperty =
     | 'unknown'
     | 'any'
     | RegExp
-    | (new (...args: any) => any) // Class types
     | ((value: any) => boolean) // Predicate functions
-    | Shape;
+    | ((value: any) => void) // Assertion functions
+    | ShapeObject
+    | ArrayShape<any>;
 
-export type RealTypeOfProperty<T extends ShapeProperty> =
+export type ShapeObject = { [key: string]: Shape };
+
+export type ArrayShape<T> = (value: any) => asserts value is T[];
+
+export type RealTypeOfShape<T extends Shape> =
     T extends 'undefined' ? undefined
     : T extends 'boolean' ? boolean
     : T extends 'number' ? number
@@ -24,13 +29,13 @@ export type RealTypeOfProperty<T extends ShapeProperty> =
     : T extends 'function' ? Function
     : T extends 'object' ? Object
     : T extends 'unknown' ? unknown
+    : T extends 'any' ? any
     : T extends RegExp ? string
     : T extends ((value: any) => value is infer R) ? R // type-check functions
+    : T extends ((value: any) => asserts value is infer R) ? R // assertion functions
     : T extends ((value: infer R) => boolean) ? R // Typed predicates
-    : T extends new (...args: any) => infer R ? R // Class/constructor functions
-    : T extends Shape ? RealTypeOfShape<T>
+    : T extends ShapeObject ? { [P in keyof T]: RealTypeOfShape<T[P]> }
+    : T extends ArrayShape<infer R> ? R[]
     : unknown;
 
-export type Shape = { [key: string]: ShapeProperty };
-
-export type RealTypeOfShape<T extends Shape> = { [P in keyof T]: RealTypeOfProperty<T[P]> };
+export type CompiledShape<T extends Shape> = (value: unknown) => asserts value is RealTypeOfShape<T>;

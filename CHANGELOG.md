@@ -1,3 +1,18 @@
+# 2.0.0
+
+## 😱 Breaking
+- Removed `compileShape()`.
+- Replaced `compileShapeAssertion()` with `shape()`.
+- `arrayShape()` is now an assertion function rather than a predicate.
+    - Returns undefined on success, throws on failure.
+
+## ✨ New
+- `hasShape()` and `assertShape()` now support all valid type specifiers,
+    rather than objects only.
+
+## 🔧 Fixes
+- Removed type conversions for class specifiers.
+
 # 1.2.2
 
 No runtime changes.
