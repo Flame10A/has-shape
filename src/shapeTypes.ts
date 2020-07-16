@@ -17,7 +17,7 @@ export type Shape =
 
 export type ShapeObject = { [key: string]: Shape };
 
-export type ArrayShape<T> = (value: any) => asserts value is T[];
+export type ArrayShape<T extends Shape> = (value: any) => asserts value is RealTypeOfShape<T>[];
 
 export type RealTypeOfShape<T extends Shape> =
     T extends 'undefined' ? undefined

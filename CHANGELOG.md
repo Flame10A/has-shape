@@ -1,3 +1,11 @@
+# 2.0.1
+
+## 🔧 Fixes
+- Fix `arrayShape()` typings.
+
+## 💻 Development changes
+- Remove unused import in `index.ts`.
+
 # 2.0.0
 
 ## 😱 Breaking
@@ -15,7 +23,7 @@
 
 # 1.2.2
 
-No runtime changes.
+No code changes.
 
 ## 💻 Development changes
 - Added repository to `package.json`.

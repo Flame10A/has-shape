@@ -16,7 +16,7 @@ interface ArrayShapeOptions {
  * By default, empty arrays are valid. This can be overridden
  *     using `options.disallowEmpty`.
  */
-export default <T extends Shape>(shape: T, options?: ArrayShapeOptions): CompiledShape<ArrayShape<T>> => {
+export default <T extends Shape>(shape: T, options?: ArrayShapeOptions): ArrayShape<T> => {
     const {
         disallowEmpty = false
     } = options ?? {};
